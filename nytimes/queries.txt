@@ -1,0 +1,20 @@
+#Articles containing the keyword Trump:
+FT.SEARCH nytimes "@KEYWORDS:{Trump\, Donald J}" nocontent
+#Articles containing the keyword Obama:
+FT.SEARCH nytimes "@KEYWORDS:{Obama\, Barack}" nocontent
+#Articles containing keywords Trump and Obama:
+FT.SEARCH nytimes "@KEYWORDS:{Obama\, Barack} @KEYWORDS:{Trump\, Donald J}" nocontent
+#Articles containing the keyword Trump and Russia also mentioned:
+FT.SEARCH nytimes "@KEYWORDS:{Trump\, Donald J} Russia" nocontent
+#Articles containing the keyword Trump and Trump in the headline:
+FT.SEARCH nytimes "@KEYWORDS:{Trump\, Donald J} @HEADLINE:Trump" return 2 HEADLINE BYLINE
+#Number of articles containing the keyword Trump by author:
+FT.AGGREGATE nytimes "@KEYWORDS:{Trump\, Donald J}" GROUPBY 1 @BYLINE REDUCE COUNT 0 as count SORTBY 2 @count desc limit 0 10
+#Number of articles by author:
+FT.AGGREGATE nytimes "*" GROUPBY 1 @byline REDUCE COUNT 0 as count SORTBY 2 @count DESC LIMIT 0 10
+#Remove artilcles written by unknown:
+FT.AGGREGATE nytimes "@BYLINE:-unknown" GROUPBY 1 @byline REDUCE COUNT 0 as count SORTBY 2 @count DESC LIMIT 0 10
+#Number of articles, average word count and total word count by author:
+FT.AGGREGATE nytimes "*" GROUPBY 1 @byline REDUCE COUNT 0 as count REDUCE AVG 1 @WORDCOUNT AS avgwords REDUCE SUM 1 @WORDCOUNT as totalwords SORTBY 2 @totalwords  DESC  LIMIT 0 10
+#Number of articles per month by a specific author:
+FT.AGGREGATE nytimes "@BYLINE:by deb amlen" APPLY monthofyear(@PUBDATE) as month GROUPBY 1 @month  REDUCE  count 0 as cnt sortby 2 @cnt desc

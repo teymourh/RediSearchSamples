@@ -1,0 +1,16 @@
+#Find order by phone number:
+FT.SEARCH sales @PHONE:2125558493 return 6 CUSTOMERNAME ADDRESSLINE1 ADDRESSLINE2 CITY POSTALCODE COUNTRY
+#Find customers with either "volvo" or "toy" not in the USA in their names:
+FT.SEARCH sales "@CUSTOMERNAME:volvo|toy -@COUNTRY:USA" return 3 ORDERNUMBER CUSTOMERNAME COUNTRY
+#Find orders of more than $5000 with less than 40 items:
+FT.SEARCH sales "@SALES:[5000 +inf] @QUANTITYORDERED:[-inf 40]" return 2 SALES QUANTITYORDERED
+#Count of product line per year:
+FT.AGGREGATE sales * groupby 2 @YEAR_ID @PRODUCTLINE REDUCE COUNT 0 as SALES_NUM sortby 4 @YEAR_ID ASC @SALES_NUM DESC
+#Average sales of Motorcycles,Ships or Classic Cars in the USA per state:
+FT.AGGREGATE sales "@PRODUCTLINE:Motorcycles|ships|Classic Cars @COUNTRY:USA" groupby 1 @STATE REDUCE AVG 1 @SALES as AVG_SALES sortby 2 @AVG_SALES DESC
+#5 countries with the lowest average of difference between price per item and item list price:
+FT.AGGREGATE sales "*" APPLY "@MSRP - @PRICEEACH" as DELTA GROUPBY 1 @COUNTRY REDUCE AVG 1 @DELTA as AVG_DELTA SORTBY 2 @AVG_DELTA ASC limit 0 5
+#Number of large deals by country:
+FT.AGGREGATE sales "@DEALSIZE:large" GROUPBY 1 @COUNTRY REDUCE COUNT 0 AS DEALS sortby 2 @DEALS DESC
+#10 customer with most sales:
+FT.AGGREGATE sales "*" GROUPBY 1 @CUSTOMERNAME  REDUCE SUM 1 @SALES AS TOTAL_SALES SORTBY 2 @TOTAL_SALES DESC limit 0 10
